@@ -24,11 +24,17 @@
     "hyperscript-helpers": "^3.0.3",
     "rewire": "^4.0.1",
     "virtual-dom": "^2.1.1",
-    "webpack": "^4.27.1",
-    "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10"
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.2.0",
+    "webpack-dev-server": "^3.1.14"
   },
   "dependencies": {
-    "ramda-x": "^1.0.11"
+    "axios": "^0.18.0",
+    "compose.helpers": "^1.0.3",
+    "data.either": "^1.5.2",
+    "lambda.either": "^1.0.3",
+    "lambda.tasks": "^1.0.2",
+    "ramda-x": "^1.0.11",
+    "request": "^2.88.0"
   }
 }

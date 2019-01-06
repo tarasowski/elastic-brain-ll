@@ -1,8 +1,12 @@
 import { combineReducers } from '../utils/combine-reducers'
-import { todos, visibilityFilter } from '../reducers/index'
+import { cards, courses, visibilityFilter, navigation } from '../reducers/index'
+
 
 export const store = combineReducers({
-    todos: todos, // key = state field, value = reducer function
-    visibilityFilter: visibilityFilter, // key = state field, value = reducer function
+    cards: cards, // key = state field, value = reducer function
+    courses: courses, // key = state field, value = reducer function
+    visibilityFilter: visibilityFilter,
+    navigation: navigation // key = state field, value = reducer function
 })
+
 

@@ -1,7 +1,7 @@
 // run node watch 
 // file that monitors reducers/index.js file, rebuilds the files for testing and runs tests!
 const exec = require('child_process').exec
-const { Task } = require('ramda-x')
+const { Task } = require('lambda.tasks')
 const path = require('path')
 const fs = require('fs')
 
