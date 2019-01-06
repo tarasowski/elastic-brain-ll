@@ -1,13 +1,13 @@
 {
-  "name": "simplecounter",
+  "name": "elasticbrain",
   "version": "1.0.0",
-  "description": "Simple Counter App",
+  "description": "Elastic Brain II",
   "scripts": {
     "start": "webpack-dev-server --open",
     "test": "rm -rf src/tests/build && babel --presets es2015 -d src/tests/build/actions src/actions && babel --presets es2015 -d src/tests/build/reducers src/reducers && babel --presets es2015 -d src/tests/build/utils src/utils && babel --presets es2015 -d src/tests/build/store src/store && node ./src/tests/reducers/*.test.js",
     "watch": "node ./src/utils/watcher.js"
   },
-  "author": "James Moore",
+  "author": "Dimitri Tarasowski",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.26.0",
