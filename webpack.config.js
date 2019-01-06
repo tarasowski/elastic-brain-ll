@@ -1,5 +1,5 @@
 module.exports = {
-  entry: ['./src/index.js'],
+  entry: ['./src/client/index.js'],
   devtool: 'inline-source-map',
   mode: 'none',
   output: {
@@ -10,7 +10,7 @@ module.exports = {
   },
   watch: true,
   devServer: {
-    contentBase: './src',
+    contentBase: './src/client/',
     compress: true,
     port: 9000,
   },
