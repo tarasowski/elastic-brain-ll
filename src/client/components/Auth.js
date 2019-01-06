@@ -1,29 +1,76 @@
 import hh from 'hyperscript-helpers'
 import { h } from 'virtual-dom'
 
-const { div, input, label, form, button, br, hr } = hh(h)
+const { h1, div, input, label, form, button, br, hr } = hh(h)
 
 
-const inputSet = name =>
+const inputSet = name => type => id =>
     div({}, [
         label({}, name),
         input({
-            type: 'text',
+            type,
             value: '',
-            id: name
+            id
         })
     ])
 
-export const Auth = () =>
+const registrationForm = onSignUpClick =>
     div({}, [
         form({}, [
-            inputSet('email'),
-            inputSet('password'),
-            inputSet('username'),
+            h1({}, 'Registration'),
+            inputSet('Username')('text')('register-username'),
+            inputSet('Password')('password')('register-password'),
+            inputSet('Email')('email')('register-email'),
             button({
-                type: 'submit'
+                type: 'button',
+                onclick: onSignUpClick,
             }, 'Register'),
             br(),
             hr()
         ])
     ])
+
+const confirmationForm = onConfirmationClick =>
+    div({}, [
+        form({}, [
+            h1({}, 'Confirmation'),
+            inputSet('Username')('text')('confirmation-username'),
+            inputSet('Code')('text')('confirmation-code'),
+            button({
+                type: 'button',
+                onclick: onConfirmationClick
+            }, 'Confirm'),
+            br(),
+            hr()
+        ])
+    ])
+
+const loginForm = onLoginClick =>
+    div({}, [
+        form({}, [
+            h1({}, 'Login'),
+            inputSet('Username')('text')('login-username'),
+            inputSet('Password')('password')('login-password'),
+            button({
+                type: 'button',
+                onclick: onLoginClick
+            }, 'Login'),
+            br(),
+            hr()
+        ])
+    ])
+
+export const Auth = ({ state: { isOnline },
+    dispatch: {
+        onRegisterClick,
+        onConfirmationClick,
+        onLoginClick } }) =>
+    isOnline
+        ? div({}, [
+            h1({}, 'Welcome to Elastic Brain')
+        ])
+        : div({}, [
+            loginForm(onLoginClick),
+            registrationForm(onRegisterClick),
+            confirmationForm(onConfirmationClick),
+        ])

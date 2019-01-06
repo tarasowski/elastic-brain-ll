@@ -1,15 +1,8 @@
+import cuid from 'cuid'
 import {
     getInputValueFromId,
     getSelectedValue,
 } from './dom'
-
-import {
-    CLEAR_ADD_CARD_TEXTAREA,
-    ADD_SELECT_ATTRIBUTE
-} from '../side-effects/index'
-
-import { Task } from 'ramda-x'
-import axios from 'axios'
 
 export const ADD_TODO = 'ADD_TODO'
 export const TOGGLE_TODO = 'TOGGLE_TODO'
@@ -25,25 +18,73 @@ export const SET_SHOW_QUESTION = 'SET_SHOW_QUESTION'
 export const LEARN_NEXT_QUESTION = 'LEARN_NEXT_QUESTION'
 export const LEARN_START_OVER = 'LEARN_START_OVER'
 export const CHANGE_URL = 'CHANGE_URL'
+export const REGISTER_ACCOUNT = 'REGISTER_ACCOUNT'
+export const CLEAR_ADD_CARD_TEXTAREA = 'CLEAR_ADD_CARD_TEXTAREA'
+export const ADD_SELECT_ATTRIBUTE = 'ADD_SELECT_ATTRIBUTE'
+export const REGISTRATION_SUCCESS = 'REGISTRATION_SUCCESS'
+export const REGISTRATION_FAILURE = 'REGISTRATION_FAILURE'
+export const CONFIRM_ACCOUNT = 'CONFIRM_ACCOUNT'
+export const LOGIN_ACCOUNT = 'LOGIN_ACCOUNT'
+export const CONFIRMATION_SUCCESS = 'CONFIRMATION_SUCCESS'
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 
-const testRequest = url =>
-    Task((rej, res) => axios.get(url).then(res).catch(rej))
 
+export const registrationSuccess = data => ({
+    type: REGISTRATION_SUCCESS,
+    payload: data
+})
+export const registrationFailure = err => ({
+    type: REGISTRATION_FAILURE,
+    payload: err
+})
 
-// export const addCourse = (counter => () => ({
-//     type: ADD_COURSE,
-//     id: counter++,
-//     course: getInputValueFromId('course'),
-//     command: {
-//         effect: testRequest('https://jsonplaceholder.typicode.com/todos/1')
-//     }
-// })
-// )(0)
+export const confirmationSuccess = msg => ({
+    type: CONFIRMATION_SUCCESS,
+    payload: msg
+})
 
-export const addCourse = (counter => () => ({
+export const loginSuccess = data => ({
+    type: LOGIN_SUCCESS,
+    payload: data
+})
+
+export const loginAccount = () => ({
+    type: LOGIN_ACCOUNT,
+    command: {
+        type: LOGIN_ACCOUNT,
+        username: getInputValueFromId('login-username'),
+        password: getInputValueFromId('login-password'),
+    }
+})
+
+export const confirmAccount = () => ({
+    type: CONFIRM_ACCOUNT,
+    command: {
+        type: CONFIRM_ACCOUNT,
+        username: getInputValueFromId('confirmation-username'),
+        code: getInputValueFromId('confirmation-code'),
+    }
+})
+
+export const registerAccount = () => ({
+    type: REGISTER_ACCOUNT,
+    command: {
+        type: REGISTER_ACCOUNT,
+        username: getInputValueFromId('register-username'),
+        password: getInputValueFromId('register-password'),
+        email: getInputValueFromId('register-email')
+    }
+})
+
+export const addCourse = (counter => (id = cuid()) => ({
     type: ADD_COURSE,
-    id: `course-${counter++}`,
-    courseName: getInputValueFromId('course')
+    id,
+    courseName: getInputValueFromId('course'),
+    command: {
+        type: ADD_COURSE,
+        id,
+        courseName: getInputValueFromId('course'),
+    }
 
 })
 )(0)
@@ -69,17 +110,6 @@ export const selectCourse = () => ({
 })
 
 
-export const addTodo = (counter => value => ({
-    type: ADD_TODO,
-    id: counter++,
-    text: value
-}))(1)
-
-export const toggleTodo = id => ({
-    type: TOGGLE_TODO,
-    id
-})
-
 export const setVisiblityFilter = filter => ({
     type: SET_VISIBILITY_FILTER,
     filter
@@ -97,10 +127,6 @@ export const learnStartOver = () => ({
     type: LEARN_START_OVER
 })
 
-export const perform = dispatch => state => ({ command: { effect } }) =>
-    effect !== undefined
-        ? effect.fork(console.error, res => console.log('comes from performIO', res))
-        : null
 
 export const changeUrl = url => ({
     type: CHANGE_URL,

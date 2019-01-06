@@ -11,6 +11,11 @@ import {
     LEARN_NEXT_QUESTION,
     LEARN_START_OVER,
     CHANGE_URL,
+    REGISTRATION_SUCCESS,
+    REGISTRATION_FAILURE,
+    CONFIRMATION_SUCCESS,
+    LOGIN_SUCCESS,
+    REGISTER_ACCOUNT,
 } from '../actions/index'
 
 
@@ -138,6 +143,36 @@ export const navigation = (state = { url: '/' }) => action => {
     switch (action.type) {
         case CHANGE_URL:
             return { ...state, url: action.url }
+        default:
+            return state
+    }
+}
+
+export const profile = (state = { isOnline: false }) => action => {
+    switch (action.type) {
+        case REGISTRATION_SUCCESS:
+            return {
+                ...state,
+                username: action.payload.user.username,
+                userId: action.payload.userSub,
+                confirmed: action.payload.userConfirmed,
+                isOnline: false
+            }
+        case CONFIRMATION_SUCCESS:
+            return {
+                ...state,
+                confirmed: true,
+                isOnline: false
+            }
+        case LOGIN_SUCCESS:
+            return {
+                ...state,
+                username: action.payload.username,
+                userId: action.payload.signInUserSession.idToken.payload.sub,
+                accessToken: action.payload.signInUserSession.accessToken.jwtToken,
+                confirmed: true,
+                isOnline: true
+            }
         default:
             return state
     }
