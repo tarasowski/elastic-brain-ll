@@ -1,9 +1,11 @@
 import cuid from 'cuid'
+import { getCookieAccessToken } from './cookie'
 import {
     getInputValueFromId,
     getSelectedValue,
 } from './dom'
 
+export const INIT = 'INIT'
 export const ADD_TODO = 'ADD_TODO'
 export const TOGGLE_TODO = 'TOGGLE_TODO'
 export const SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER'
@@ -27,7 +29,22 @@ export const CONFIRM_ACCOUNT = 'CONFIRM_ACCOUNT'
 export const LOGIN_ACCOUNT = 'LOGIN_ACCOUNT'
 export const CONFIRMATION_SUCCESS = 'CONFIRMATION_SUCCESS'
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
+export const UPDATE_COURSES = 'UPDATE_COURSES'
+export const SAVE_ACCESS_TOKEN = 'SAVE_ACCESS_TOKEN'
 
+export const init = (token = getCookieAccessToken()) => ({
+    type: INIT,
+    payload: token,
+    command: {
+        type: INIT,
+        accessToken: token
+    }
+})
+
+export const updateCourses = data => ({
+    type: UPDATE_COURSES,
+    payload: data
+})
 
 export const registrationSuccess = data => ({
     type: REGISTRATION_SUCCESS,
@@ -45,7 +62,10 @@ export const confirmationSuccess = msg => ({
 
 export const loginSuccess = data => ({
     type: LOGIN_SUCCESS,
-    payload: data
+    payload: data,
+    command: {
+        type: SAVE_ACCESS_TOKEN
+    }
 })
 
 export const loginAccount = () => ({

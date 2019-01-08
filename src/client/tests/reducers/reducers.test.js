@@ -1,5 +1,5 @@
-const expect = require('expect')
-const deepFreeze = require('../../../node_modules/deep-freeze')
+const { expect } = require('expect.equal')
+const { deepFreeze } = require('immutable.freeze')
 const { todos } = require('../build/reducers')
 const { store } = require('../build/store/configureStore')
 const { cards, courses, input } = require('../build/reducers')

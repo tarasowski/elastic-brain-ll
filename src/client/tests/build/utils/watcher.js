@@ -4,7 +4,7 @@
 // file that monitors reducers/index.js file, rebuilds the files for testing and runs tests!
 var exec = require('child_process').exec;
 
-var _require = require('ramda-x'),
+var _require = require('lambda.tasks'),
     Task = _require.Task;
 
 var path = require('path');
