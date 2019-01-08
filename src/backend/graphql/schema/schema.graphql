@@ -1,0 +1,33 @@
+# This is me Dimitri
+type AllCourses {
+	items: [CourseList]
+	nextToken: String
+}
+
+type CourseList {
+	courses: [SingleCourse]
+}
+
+type Mutation {
+	addNewCourse(name: String!, id: String!): MyCourseList
+	addNewCard(name: String!): String
+}
+
+type MyCourseList {
+	userId: String!
+	courses: [SingleCourse]
+}
+
+type Query {
+	getAllCourses: AllCourses
+}
+
+type SingleCourse {
+	name: String!
+	id: String!
+}
+
+schema {
+	query: Query
+	mutation: Mutation
+}
