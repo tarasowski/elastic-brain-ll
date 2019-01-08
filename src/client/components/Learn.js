@@ -18,7 +18,7 @@ const numberOfQuestions = visibilityFilter => cards =>
     )(cards)
 
 const showCourses = cards => ({ onCourseClick }) =>
-    cards.map(el => li({ onclick: onCourseClick, id: el.id }, `Id: - ${el.id} - Name: ${el.courseName} `))
+    cards.map(el => li({ onclick: onCourseClick, id: el.id }, `Id: - ${el.id} - Name: ${el.name} `))
 
 const showProgress = visibilityFilter => cards =>
     p({}, `

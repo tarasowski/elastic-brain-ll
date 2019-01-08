@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.input = exports.courses = exports.cards = exports.visibilityFilter = exports.todos = undefined;
+exports.profile = exports.navigation = exports.courses = exports.cards = exports.visibilityFilter = exports.todos = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -46,11 +46,17 @@ var todos = exports.todos = function todos() {
 };
 
 var visibilityFilter = exports.visibilityFilter = function visibilityFilter() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'SHOW_ALL';
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     return function (action) {
         switch (action.type) {
             case _index.SET_VISIBILITY_FILTER:
-                return action.filter;
+                return _extends({}, state, { showCourse: action.filter, showAnswer: false, currentQuestionId: 0 });
+            case _index.SET_SHOW_QUESTION:
+                return _extends({}, state, { showAnswer: true });
+            case _index.LEARN_NEXT_QUESTION:
+                return _extends({}, state, { showAnswer: false, currentQuestionId: state.currentQuestionId + 1 });
+            case _index.LEARN_START_OVER:
+                return {};
             default:
                 return state;
         }
@@ -66,7 +72,7 @@ var card = function card() {
                     id: action.id,
                     question: action.question,
                     answer: action.answer,
-                    course: action.course
+                    course: { id: action.course.id, course: action.course }
                 };
             default:
                 return state;
@@ -75,7 +81,29 @@ var card = function card() {
 };
 
 var cards = exports.cards = function cards() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [{
+        id: 0,
+        question: "my #1 question",
+        answer: "my #1 answer",
+        course: {
+            course: "course-0"
+        }
+    }, {
+        id: 1,
+        question: "my #2 question",
+        answer: "my #2 answer",
+        course: {
+            course: "course-0"
+        }
+    }, {
+        id: 2,
+        question: "my #3 question",
+        answer: "my #3 answer",
+        course: {
+            course: "course-0"
+
+        }
+    }];
     return function (action) {
         switch (action.type) {
             case _index.ADD_CARD:
@@ -97,14 +125,19 @@ var course = function course() {
             case _index.ADD_COURSE:
                 return {
                     id: action.id,
-                    course: action.course
+                    courseName: action.courseName
                 };
+            default:
+                return state;
         }
     };
 };
 
 var courses = exports.courses = function courses() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [{
+        id: "course-0",
+        courseName: "first"
+    }];
     return function (action) {
         switch (action.type) {
             case _index.ADD_COURSE:
@@ -119,12 +152,42 @@ var courses = exports.courses = function courses() {
     };
 };
 
-var input = exports.input = function input() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+var navigation = exports.navigation = function navigation() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { url: '/' };
     return function (action) {
         switch (action.type) {
-            case _index.INPUT_COURSE:
-                return _extends({}, state, { courseName: action.courseName });
+            case _index.CHANGE_URL:
+                return _extends({}, state, { url: action.url });
+            default:
+                return state;
+        }
+    };
+};
+
+var profile = exports.profile = function profile() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { isOnline: false };
+    return function (action) {
+        switch (action.type) {
+            case _index.REGISTRATION_SUCCESS:
+                return _extends({}, state, {
+                    username: action.payload.user.username,
+                    userId: action.payload.userSub,
+                    confirmed: action.payload.userConfirmed,
+                    isOnline: false
+                });
+            case _index.CONFIRMATION_SUCCESS:
+                return _extends({}, state, {
+                    confirmed: true,
+                    isOnline: false
+                });
+            case _index.LOGIN_SUCCESS:
+                return _extends({}, state, {
+                    username: action.payload.username,
+                    userId: action.payload.signInUserSession.idToken.payload.sub,
+                    accessToken: action.payload.signInUserSession.accessToken.jwtToken,
+                    confirmed: true,
+                    isOnline: true
+                });
             default:
                 return state;
         }
