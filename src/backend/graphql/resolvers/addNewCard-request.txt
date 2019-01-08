@@ -1,0 +1,17 @@
+#set ( $userId = $context.identity.sub )
+#set( $id = $context.arguments.questionId)
+#set( $question = $context.arguments.question )
+#set( $answer = $context.argument.answer)
+#set ($courseName = $context.argument.courseName)
+#set( $courseId = $context.argument.courseId)
+
+{
+  "version": "2017-02-28",
+  "operation": "PutItem",
+  "key": {
+    "userId": { "S": "$userId" }
+    "userId_category_cuid": ${"S": "$userId_$courseName_$questonId"}
+  },
+  "attributeValues": $util.dynamodb.toMapValuesJson($ctx.args)
+ }
+}

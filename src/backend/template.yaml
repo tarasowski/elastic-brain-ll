@@ -50,6 +50,23 @@ Resources:
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
 
+  EBCards:
+    Type: "AWS::DynamoDB::Table"
+    Description: Storage for the EB cards
+    Properties:
+      TableName: !Sub EBCards-${APIStage}
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: userId_category_cuid
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: userId_category_cuid
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
   EBUserPool:
     Type: "AWS::Cognito::UserPool"
     Properties:
@@ -116,7 +133,9 @@ Resources:
               - dynamodb:Scan
               - dynamodb:BatchGetItem
               - dynamodb:BatchWriteItem
-            Resource: !Join ["", [!GetAtt EBCourses.Arn, "*"]]
+            Resource: 
+              - !Join ["", [!GetAtt EBCourses.Arn, "*"]]
+              - !Join ["", [!GetAtt EBCards.Arn, "*"]]
 
   EBAppSyncAPI:
     Type: "AWS::AppSync::GraphQLApi"
@@ -146,6 +165,18 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref EBCourses
         AwsRegion: !Sub ${AWS::Region}
+  
+  EBCardDataSource:
+    Type: "AWS::AppSync::DataSource"
+    Properties:
+      ApiId: !GetAtt EBAppSyncAPI.ApiId
+      Name: EBCards
+      Description: Dynamodb Table for cards
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !GetAtt DynamoDBRole.Arn
+      DynamoDBConfig:
+        TableName: !Ref EBCards
+        AwsRegion: !Sub ${AWS::Region}
 
   AddCourseDataResolver:
     Type: "AWS::AppSync::Resolver"
@@ -168,6 +199,17 @@ Resources:
       DataSourceName: !GetAtt EBCourseDataSource.Name
       RequestMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/getAllCourses-request.txt"]]
       ResponseMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/getAllCourses-response.txt"]]
+
+  AddCardDataResolver:
+    Type: "AWS::AppSync::Resolver"
+    DependsOn: EBAppSyncSchema
+    Properties:
+      ApiId: !GetAtt EBAppSyncAPI.ApiId
+      TypeName: Mutation
+      FieldName: addNewCard
+      DataSourceName: !GetAtt EBCardDataSource.Name
+      RequestMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/addNewCard-request.txt"]]
+      ResponseMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/addNewCard-response.txt"]]
         
 Outputs:
   EBCoursesTableArn:

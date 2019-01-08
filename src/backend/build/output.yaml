@@ -42,6 +42,32 @@ Parameters:
     Description: The email of the super admin
     Type: String
 Resources:
+  AddCardDataResolver:
+    DependsOn: EBAppSyncSchema
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - EBAppSyncAPI
+        - ApiId
+      DataSourceName:
+        Fn::GetAtt:
+        - EBCardDataSource
+        - Name
+      FieldName: addNewCard
+      RequestMappingTemplateS3Location:
+        Fn::Join:
+        - ''
+        - - s3://
+          - Ref: ArtifactS3Bucket
+          - /graphql/resolvers/addNewCard-request.txt
+      ResponseMappingTemplateS3Location:
+        Fn::Join:
+        - ''
+        - - s3://
+          - Ref: ArtifactS3Bucket
+          - /graphql/resolvers/addNewCard-response.txt
+      TypeName: Mutation
+    Type: AWS::AppSync::Resolver
   AddCourseDataResolver:
     DependsOn: EBAppSyncSchema
     Properties:
@@ -86,10 +112,16 @@ Resources:
           - dynamodb:BatchWriteItem
           Effect: Allow
           Resource:
-            Fn::Join:
+          - Fn::Join:
             - ''
             - - Fn::GetAtt:
                 - EBCourses
+                - Arn
+              - '*'
+          - Fn::Join:
+            - ''
+            - - Fn::GetAtt:
+                - EBCards
                 - Arn
               - '*'
         Version: 2012-10-17
@@ -138,6 +170,42 @@ Resources:
           - Ref: ArtifactS3Bucket
           - /graphql/schema/schema.graphql
     Type: AWS::AppSync::GraphQLSchema
+  EBCardDataSource:
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - EBAppSyncAPI
+        - ApiId
+      Description: Dynamodb Table for cards
+      DynamoDBConfig:
+        AwsRegion:
+          Fn::Sub: ${AWS::Region}
+        TableName:
+          Ref: EBCards
+      Name: EBCards
+      ServiceRoleArn:
+        Fn::GetAtt:
+        - DynamoDBRole
+        - Arn
+      Type: AMAZON_DYNAMODB
+    Type: AWS::AppSync::DataSource
+  EBCards:
+    Description: Storage for the EB cards
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: userId
+        AttributeType: S
+      - AttributeName: userId_category_cuid
+        AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+      - AttributeName: userId
+        KeyType: HASH
+      - AttributeName: userId_category_cuid
+        KeyType: RANGE
+      TableName:
+        Fn::Sub: EBCards-${APIStage}
+    Type: AWS::DynamoDB::Table
   EBCourseDataSource:
     Properties:
       ApiId:

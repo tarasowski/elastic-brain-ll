@@ -8,10 +8,19 @@
     "bucket": "aws s3api create-bucket --bucket elastic-brain-stack --region eu-west-1 --create-bucket-configuration LocationConstraint=eu-west-1",
     "package": "aws cloudformation package --template-file template.yaml --output-template-file build/output.yaml --s3-bucket elastic-brain-stack",
     "deploy": "aws cloudformation deploy --template-file build/output.yaml --stack-name elastic-brain-stack --capabilities CAPABILITY_NAMED_IAM",
-    "qd": "npm run folder && npm run package && npm run deploy",
-    "scotty": "aws s3 cp graphql/ s3://elastic-brain-stack/graphql/ --recursive"
+    "upload": "aws s3 cp graphql/ s3://elastic-brain-stack/graphql/ --recursive",
+    "qd": "npm run upload && npm run folder && npm run package && npm run deploy",
+    "update": "node ./utils/update-resolvers.js && node ./utils/update-schema.js"
   },
   "keywords": [],
   "author": "Dimitri Tarasowski <dimitri+npm@tarasowski.de>",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.384.0"
+  },
+  "dependencies": {
+    "compose.helpers": "^1.0.3",
+    "lambda.either": "^1.0.3",
+    "lambda.tasks": "^1.0.2"
+  }
 }
