@@ -1,0 +1,16 @@
+#set( $name = $context.arguments.name )
+#set( $id = $context.arguments.id)
+{
+  "version": "2017-02-28",
+  "operation": "UpdateItem",
+  "key": {
+    "userId": { "S": "${context.identity.sub}" }
+  },
+  "update": {
+    "expression": "SET courses = list_append(if_not_exists(courses, :emptyList), :course)",
+    "expressionValues": {
+    ":emptyList": {"L": []},
+      ":course": {"L": [ { "M": { "name": { "S": "$name"}, "id": {"S": "$id"}} }]}
+    }
+ }
+}

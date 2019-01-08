@@ -1,0 +1,175 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Description: Elastic Brain II stack
+
+Parameters:
+  APIName:
+    Type: String
+    Description: The name of the API
+    MinLength: 3
+    MaxLength: 20
+    Default: EB2API
+    AllowedPattern: "^[a-zA-Z][a-zA-Z0-9_]*$"
+  APIStage:
+    Type: String
+    Description: The name of the API stage
+    MinLength: 3
+    MaxLength: 20
+    Default: dev
+    AllowedPattern: "^[a-zA-Z][a-zA-Z0-9_]*$"
+  SuperAdminEmail:
+    Type: String
+    Description: The email of the super admin
+    Default: dimitri+ebadmin@tarasowski.de
+  ArtifactS3Bucket:
+    Type: String
+    Description: S3 bucket name for all artifacts
+    Default: elastic-brain-stack
+
+Globals:
+  Function:
+    Runtime: nodejs8.10
+    Timeout: 3
+    MemorySize: 128
+    Environment:
+      Variables:
+        TABLE_NAME_COURSES: !Ref EBCourses
+        TABLE_NAME_CARDS: !Ref EBCards
+
+Resources:
+  EBCourses:
+    Type: "AWS::DynamoDB::Table"
+    Description: Storage for the EB courses
+    Properties:
+      TableName: !Sub EBCourses-${APIStage}
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  EBUserPool:
+    Type: "AWS::Cognito::UserPool"
+    Properties:
+        UserPoolName: !Sub ${APIName}-${APIStage}
+        UsernameAttributes:
+          - email
+        UserPoolTags:
+          Name: Name
+          Value: !Sub ${APIName}-${APIStage}
+        Schema:
+          - Name: email
+            Required: true
+            Mutable: true
+
+  EBPoolClient:
+    Type: "AWS::Cognito::UserPoolClient"
+    Properties:
+      UserPoolId: !Ref EBUserPool
+
+  SuperAdminUser:
+    Type: "AWS::Cognito::UserPoolUser"
+    Properties:
+      DesiredDeliveryMediums:
+        - EMAIL
+      Username: !Ref SuperAdminEmail
+      UserAttributes:
+        - Name: email
+          Value: !Ref SuperAdminEmail
+      UserPoolId: !Ref EBUserPool
+
+  DynamoDBRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub ${APIName}-appsync-dynamodb-role-${APIStage}
+      ManagedPolicyArns:
+        - Ref: AppSyncDynamoDBPolicy
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement: 
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Principal:
+              Service:
+                - appsync.amazonaws.com
+    DependsOn:
+      - AppSyncDynamoDBPolicy
+
+  AppSyncDynamoDBPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Manages policy to allow AWS AppSync to access the tables created by this template
+      Path: /appsync/
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:DeleteItem
+              - dynamodb:UpdateItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+            Resource: !Join ["", [!GetAtt EBCourses.Arn, "*"]]
+
+  EBAppSyncAPI:
+    Type: "AWS::AppSync::GraphQLApi"
+    Description: GraphQL API Endpoint for Elastic Brain
+    Properties:
+      AuthenticationType: AMAZON_COGNITO_USER_POOLS
+      Name: !Sub ${APIName}-${APIStage}
+      UserPoolConfig:
+          UserPoolId: !Ref EBUserPool
+          AwsRegion: !Sub ${AWS::Region}
+          DefaultAction: ALLOW
+
+  EBAppSyncSchema:
+    Type: "AWS::AppSync::GraphQLSchema"
+    Properties:
+      ApiId: !GetAtt EBAppSyncAPI.ApiId
+      DefinitionS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/schema/schema.graphql"] ]
+
+  EBCourseDataSource:
+    Type: "AWS::AppSync::DataSource"
+    Properties:
+      ApiId: !GetAtt EBAppSyncAPI.ApiId
+      Name: EBCourses
+      Description: Dynamodb Table for courses
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !GetAtt DynamoDBRole.Arn
+      DynamoDBConfig:
+        TableName: !Ref EBCourses
+        AwsRegion: !Sub ${AWS::Region}
+
+  AddCourseDataResolver:
+    Type: "AWS::AppSync::Resolver"
+    DependsOn: EBAppSyncSchema
+    Properties:
+      ApiId: !GetAtt EBAppSyncAPI.ApiId
+      TypeName: Mutation
+      FieldName: addNewCourse
+      DataSourceName: !GetAtt EBCourseDataSource.Name
+      RequestMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/addNewCourse-request.txt"]]
+      ResponseMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/addNewCourse-response.txt"]]
+  
+  GetAllCoursesDataResolver:
+    Type: "AWS::AppSync::Resolver"
+    DependsOn: EBAppSyncSchema
+    Properties:
+      ApiId: !GetAtt EBAppSyncAPI.ApiId
+      TypeName: Query
+      FieldName: getAllCourses
+      DataSourceName: !GetAtt EBCourseDataSource.Name
+      RequestMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/getAllCourses-request.txt"]]
+      ResponseMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/getAllCourses-response.txt"]]
+        
+Outputs:
+  EBCoursesTableArn:
+    Description: Arn of EB Courses Table
+    Value: !GetAtt EBCourses.Arn
