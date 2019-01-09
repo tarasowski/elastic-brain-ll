@@ -1,6 +1,6 @@
 const { Either } = require('lambda.either')
 const { Task } = require('lambda.tasks')
-const { compose, map, chain, fold } = require('compose.helpers')
+const { compose, map, chain, fold, trace } = require('compose.helpers')
 const Appsync = require('aws-sdk/clients/appsync')
 const appsync = new Appsync({ region: 'eu-west-1' })
 const fs = require('fs')
@@ -60,9 +60,6 @@ const restParams = ({ rest, ...obj }) => ({
     dataSourceName: rest.dataSourceName
 })
 
-const concurrent = xs =>
-    xs.forEach(el => el.fork(console.error, data => console.log('resolver: ' + data.resolver.fieldName + ' was successfully updated')))
-
 
 const updateResolver = params =>
     Task((reject, resolve) => appsync.updateResolver(params, (err, data) =>
@@ -80,14 +77,16 @@ const constructParams = xs =>
 
 
 const update = compose(
-    map(concurrent),
-    map(lift),
-    map(constructParams),
-    Task.of
+    lift,
+    constructParams,
 )
 
-update(fieldNames)
-    .fork(console.error, x => x)
+const pipeline = update(fieldNames)
+
+pipeline
+    .forEach(el => el.fork(console.error,
+        data =>
+            console.log('resolver: ' + data.resolver.fieldName + ' was successfully updated')))
 
 
 
