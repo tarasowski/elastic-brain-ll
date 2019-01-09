@@ -10,7 +10,8 @@
     "deploy": "aws cloudformation deploy --template-file build/output.yaml --stack-name elastic-brain-stack --capabilities CAPABILITY_NAMED_IAM",
     "upload": "aws s3 cp graphql/ s3://elastic-brain-stack/graphql/ --recursive",
     "qd": "npm run upload && npm run folder && npm run package && npm run deploy",
-    "update": "node ./utils/update-resolvers.js && node ./utils/update-schema.js"
+    "update": "node ./utils/index.js",
+    "monitor": "nodemon -e txt,graphql  --watch ./graphql ./utils/index.js"
   },
   "keywords": [],
   "author": "Dimitri Tarasowski <dimitri+npm@tarasowski.de>",

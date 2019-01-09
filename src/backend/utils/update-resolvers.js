@@ -5,7 +5,7 @@ const Appsync = require('aws-sdk/clients/appsync')
 const appsync = new Appsync({ region: 'eu-west-1' })
 const fs = require('fs')
 const path = require('path')
-const { apiId } = require('./apiId')
+const { fieldNames, apiId } = require('./setup')
 
 const makePath = fileName =>
     path.join(__dirname, '../', `/graphql/resolvers/${fileName}`)
@@ -18,32 +18,6 @@ const readContent = compose(
     readFile,
     makePath
 )
-
-
-const fieldNames = [
-    {
-        fieldName: 'addNewCard',
-        requestFile: 'addNewCard-request.txt',
-        responseFile: 'addNewCard-response.txt',
-        typeName: 'Mutation',
-        dataSourceName: 'EBCards',
-    },
-    {
-        fieldName: 'addNewCourse',
-        requestFile: 'addNewCourse-request.txt',
-        responseFile: 'addNewCourse-response.txt',
-        typeName: 'Mutation',
-        dataSourceName: 'EBCourses'
-    },
-    {
-        fieldName: 'getAllCourses',
-        requestFile: 'getAllCourses-request.txt',
-        responseFile: 'getAllCourses-response.txt',
-        typeName: 'Query',
-        dataSourceName: 'EBCourses'
-    }]
-
-
 
 const init = apiId => ({ fieldName, ...rest }) => ({
     apiId,
@@ -81,12 +55,10 @@ const update = compose(
     constructParams,
 )
 
-const pipeline = update(fieldNames)
+const resolverUpdate = update(fieldNames)
 
-pipeline
-    .forEach(el => el.fork(console.error,
-        data =>
-            console.log('resolver: ' + data.resolver.fieldName + ' was successfully updated')))
+module.exports = { resolverUpdate }
+
 
 
 

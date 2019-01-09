@@ -1,4 +1,4 @@
-# This is me Dimitri
+# Changed my schema
 type AllCourses {
 	items: [CourseList]
 	nextToken: String

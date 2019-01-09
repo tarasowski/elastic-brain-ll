@@ -5,7 +5,7 @@ const Appsync = require('aws-sdk/clients/appsync')
 const appsync = new Appsync({ region: 'eu-west-1' })
 const fs = require('fs')
 const path = require('path')
-const { apiId } = require('./apiId')
+const { apiId } = require('./setup')
 
 const constructParams = apiId => data => ({
     apiId: apiId,
@@ -25,7 +25,8 @@ const updateApi = params =>
             err ? reject(err) : resolve(data)))
 
 
-readSchema(schemaPath)
+const schemaUpdate = readSchema(schemaPath)
     .map(constructParams(apiId))
     .chain(updateApi)
-    .fork(err => console.error('something went wrong', err), x => console.log('graphql schema has been updated'))
+
+module.exports = { schemaUpdate }
