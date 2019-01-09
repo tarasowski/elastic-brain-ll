@@ -8,8 +8,8 @@ const head = xs => xs[0]
 
 const getContainerName = xs => prop('container', head(xs))
 
-const loadContainer = dispatch => state => container =>
-    container(dispatch)(state)
+const loadContainer = state => dispatch => container =>
+    container(state)(dispatch)
 
 export const view = routes => state => dispatch =>
     compose(

@@ -30,15 +30,15 @@ const fieldNames = [
     },
     {
         fieldName: 'addNewCourse',
-        requestFile: readContent('addNewCourse-request.txt'),
-        responseFile: readContent('addNewCourse-response.txt'),
+        requestFile: 'addNewCourse-request.txt',
+        responseFile: 'addNewCourse-response.txt',
         typeName: 'Mutation',
         dataSourceName: 'EBCourses'
     },
     {
         fieldName: 'getAllCourses',
-        requestFile: readContent('getAllCourses-request.txt'),
-        responseFile: readContent('getAllCourses-response.txt'),
+        requestFile: 'getAllCourses-request.txt',
+        responseFile: 'getAllCourses-response.txt',
         typeName: 'Query',
         dataSourceName: 'EBCourses'
     }]
@@ -54,8 +54,8 @@ const init = apiId => ({ fieldName, ...rest }) => ({
 
 const restParams = ({ rest, ...obj }) => ({
     ...obj,
-    requestMappingTemplate: rest.requestFile,
-    responseMappingTemplate: rest.responseFile,
+    requestMappingTemplate: readContent(rest.requestFile),
+    responseMappingTemplate: readContent(rest.responseFile),
     typeName: rest.typeName,
     dataSourceName: rest.dataSourceName
 })
