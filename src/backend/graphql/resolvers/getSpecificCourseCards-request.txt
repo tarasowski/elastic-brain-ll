@@ -1,0 +1,12 @@
+#set($courseId = $context.arguments.courseId)
+
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "query" : {
+        "expression": "userId = :id",
+        "expressionValues" : {
+            ":id" : $util.dynamodb.toDynamoDBJson($context.identity.sub),
+        }
+    }
+}

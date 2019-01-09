@@ -210,6 +210,17 @@ Resources:
       DataSourceName: !GetAtt EBCardDataSource.Name
       RequestMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/addNewCard-request.txt"]]
       ResponseMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/addNewCard-response.txt"]]
+  
+  GetSpecificCourseCardsDataResolver:
+    Type: "AWS::AppSync::Resolver"
+    DependsOn: EBAppSyncSchema
+    Properties:
+      ApiId: !GetAtt EBAppSyncAPI.ApiId
+      TypeName: Query
+      FieldName: getSpecificCourseCards
+      DataSourceName: !GetAtt EBCardDataSource.Name
+      RequestMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/getSpecificCourseCards-request.txt"]]
+      ResponseMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/getSpecificCourseCards-response.txt"]]
         
 Outputs:
   EBCoursesTableArn:

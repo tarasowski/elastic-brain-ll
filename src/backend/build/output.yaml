@@ -284,6 +284,32 @@ Resources:
           - /graphql/resolvers/getAllCourses-response.txt
       TypeName: Query
     Type: AWS::AppSync::Resolver
+  GetSpecificCourseCardsDataResolver:
+    DependsOn: EBAppSyncSchema
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - EBAppSyncAPI
+        - ApiId
+      DataSourceName:
+        Fn::GetAtt:
+        - EBCardDataSource
+        - Name
+      FieldName: getSpecificCourseCards
+      RequestMappingTemplateS3Location:
+        Fn::Join:
+        - ''
+        - - s3://
+          - Ref: ArtifactS3Bucket
+          - /graphql/resolvers/getSpecificCourseCards-request.txt
+      ResponseMappingTemplateS3Location:
+        Fn::Join:
+        - ''
+        - - s3://
+          - Ref: ArtifactS3Bucket
+          - /graphql/resolvers/getSpecificCourseCards-response.txt
+      TypeName: Query
+    Type: AWS::AppSync::Resolver
   SuperAdminUser:
     Properties:
       DesiredDeliveryMediums:

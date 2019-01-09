@@ -1,2 +1,2 @@
 ## Pass back the result from DynamoDB. **
-$util.toJson($ctx.result)
+$util.toJson("Your Question was successfully saved!")
