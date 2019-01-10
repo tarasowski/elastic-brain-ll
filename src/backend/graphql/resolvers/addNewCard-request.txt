@@ -1,11 +1,11 @@
 #set($userId = $context.identity.sub )
-#set($questionId = $context.arguments.input.questionId)
+#set($cardId = $context.arguments.input.cardId)
 #set($question = $context.arguments.input.question )
 #set($answer = $context.arguments.input.answer)
-#set($courseId = $context.arguments.input.course.courseId)
-#set($courseName = $context.arguments.input.course.courseName)
-#set($date = $context.arguments.input.date)
-#set($range = "${userId}_${courseId}_${questionId}")
+#set($courseId = $context.arguments.input.courseId)
+#set($dateAdded = $context.arguments.input.dateAdded)
+#set($range = "${userId}_${courseId}_${cardId}")
+#set($timestamp = $util.time.nowISO8601())
 
 
 {
@@ -13,15 +13,14 @@
   "operation": "PutItem",
   "key": {
     "userId": { "S": "$userId" },
-    "userId_category_cuid": {"S": "$range"},
+    "userId_courseId_questionId": {"S": "$range"},
   },
   "attributeValues": {
-    "questionId": {"S": "$questionId"},
+    "cardId": {"S": "$cardId"},
     "question": {"S": "$question"},
     "answer": {"S": "$answer"},
-    "date": {"S": "$date"},
+    "dateAdded": {"S": "$dateAdded"},
     "courseId": {"S": "$courseId"},
-    "courseName": {"S": "$courseName"},
     }
   }
  }

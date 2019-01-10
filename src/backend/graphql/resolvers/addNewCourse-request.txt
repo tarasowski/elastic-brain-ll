@@ -1,5 +1,5 @@
-#set( $name = $context.arguments.name )
-#set( $id = $context.arguments.id)
+#set( $name = $context.arguments.courseName )
+#set( $id = $context.arguments.courseId)
 {
   "version": "2017-02-28",
   "operation": "UpdateItem",
@@ -10,7 +10,7 @@
     "expression": "SET courses = list_append(if_not_exists(courses, :emptyList), :course)",
     "expressionValues": {
     ":emptyList": {"L": []},
-      ":course": {"L": [ { "M": { "name": { "S": "$name"}, "id": {"S": "$id"}} }]}
+      ":course": {"L": [ { "M": { "courseName": { "S": "$name"}, "courseId": {"S": "$id"}} }]}
     }
  }
 }

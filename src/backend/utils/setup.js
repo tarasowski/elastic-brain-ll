@@ -4,7 +4,7 @@ const fieldNames = [
         requestFile: 'addNewCard-request.txt',
         responseFile: 'addNewCard-response.txt',
         typeName: 'Mutation',
-        dataSourceName: 'EBCards',
+        dataSourceName: 'EBCardsV1',
     },
     {
         fieldName: 'addNewCourse',
@@ -19,7 +19,23 @@ const fieldNames = [
         responseFile: 'getAllCourses-response.txt',
         typeName: 'Query',
         dataSourceName: 'EBCourses'
-    }]
+    },
+    {
+        fieldName: 'getSpecificCourseCards',
+        requestFile: 'getSpecificCourseCards-request.txt',
+        responseFile: 'getSpecificCourseCards-response.txt',
+        typeName: 'Query',
+        dataSourceName: 'EBCardsV1'
+    },
+    {
+        fieldName: 'getAllCards',
+        requestFile: 'getAllCards-request.txt',
+        responseFile: 'getAllCards-response.txt',
+        typeName: 'Query',
+        dataSourceName: 'EBCardsV1'
+    },
+
+]
 
 
 const apiId = '3cazgel7lngcbjy3hqf4crf45a'

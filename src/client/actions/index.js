@@ -31,6 +31,7 @@ export const CONFIRMATION_SUCCESS = 'CONFIRMATION_SUCCESS'
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 export const UPDATE_COURSES = 'UPDATE_COURSES'
 export const SAVE_ACCESS_TOKEN = 'SAVE_ACCESS_TOKEN'
+export const UPDATE_CARDS = 'UPDATE_CARDS'
 
 export const init = (token = getCookieAccessToken()) => ({
     type: INIT,
@@ -39,6 +40,11 @@ export const init = (token = getCookieAccessToken()) => ({
         type: INIT,
         accessToken: token
     }
+})
+
+export const updateCards = data => ({
+    type: UPDATE_CARDS,
+    payload: data
 })
 
 export const updateCourses = data => ({
@@ -96,30 +102,42 @@ export const registerAccount = () => ({
     }
 })
 
-export const addCourse = (counter => (id = cuid()) => ({
+export const addCourse = (courseId = cuid()) => ({
     type: ADD_COURSE,
-    id,
+    courseId,
     courseName: getInputValueFromId('course'),
     command: {
         type: ADD_COURSE,
-        id,
+        courseId,
         courseName: getInputValueFromId('course'),
     }
 
 })
-)(0)
 
 
-export const addCard = (counter => () => ({
+
+export const addCard = (
+    cardId = cuid(),
+    dateAdded = new Date().toISOString(),
+    question = getInputValueFromId('card-question'),
+    answer = getInputValueFromId('card-answer'),
+    courseId = getSelectedValue('courseList')
+) => ({
     type: ADD_CARD,
-    id: counter++,
-    question: getInputValueFromId('card-question'),
-    answer: getInputValueFromId('card-answer'),
-    course: getSelectedValue('courseList'),
+    cardId,
+    question,
+    answer,
+    dateAdded,
+    courseId,
     command: {
-        type: CLEAR_ADD_CARD_TEXTAREA
+        type: CLEAR_ADD_CARD_TEXTAREA,
+        cardId,
+        question,
+        answer,
+        dateAdded,
+        courseId
     }
-}))(0)
+})
 
 
 export const selectCourse = () => ({

@@ -5,7 +5,7 @@ import { compose, filter, prop } from 'compose.helpers'
 const { div, br, hr, h2, button, h3, p, ul, li } = hh(h)
 
 const byCourse = visibilityFilter => card =>
-    card.course.course === visibilityFilter.showCourse
+    card.courseId === visibilityFilter.showCourse
 
 const length = xs => xs.length
 const position = n => xs => n !== undefined ? xs[n] : xs[0]
@@ -18,7 +18,7 @@ const numberOfQuestions = visibilityFilter => cards =>
     )(cards)
 
 const showCourses = cards => ({ onCourseClick }) =>
-    cards.map(el => li({ onclick: onCourseClick, id: el.id }, `Id: - ${el.id} - Name: ${el.name} `))
+    cards.map(el => li({ onclick: onCourseClick, id: el.courseId }, `Id: - ${el.courseId} - Name: ${el.courseName} `))
 
 const showProgress = visibilityFilter => cards =>
     p({}, `

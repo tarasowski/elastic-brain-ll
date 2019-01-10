@@ -34,7 +34,7 @@ Globals:
     Environment:
       Variables:
         TABLE_NAME_COURSES: !Ref EBCourses
-        TABLE_NAME_CARDS: !Ref EBCards
+        TABLE_NAME_CARDS: !Ref EBCardsV1
 
 Resources:
   EBCourses:
@@ -50,20 +50,20 @@ Resources:
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
 
-  EBCards:
+  EBCardsV1:
     Type: "AWS::DynamoDB::Table"
     Description: Storage for the EB cards
     Properties:
-      TableName: !Sub EBCards-${APIStage}
+      TableName: !Sub EBCardsV1-${APIStage}
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
-        - AttributeName: userId_category_cuid
+        - AttributeName: userId_courseId_questionId
           AttributeType: S
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
-        - AttributeName: userId_category_cuid
+        - AttributeName: userId_courseId_questionId
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
 
@@ -135,7 +135,7 @@ Resources:
               - dynamodb:BatchWriteItem
             Resource: 
               - !Join ["", [!GetAtt EBCourses.Arn, "*"]]
-              - !Join ["", [!GetAtt EBCards.Arn, "*"]]
+              - !Join ["", [!GetAtt EBCardsV1.Arn, "*"]]
 
   EBAppSyncAPI:
     Type: "AWS::AppSync::GraphQLApi"
@@ -170,12 +170,12 @@ Resources:
     Type: "AWS::AppSync::DataSource"
     Properties:
       ApiId: !GetAtt EBAppSyncAPI.ApiId
-      Name: EBCards
+      Name: EBCardsV1
       Description: Dynamodb Table for cards
       Type: AMAZON_DYNAMODB
       ServiceRoleArn: !GetAtt DynamoDBRole.Arn
       DynamoDBConfig:
-        TableName: !Ref EBCards
+        TableName: !Ref EBCardsV1
         AwsRegion: !Sub ${AWS::Region}
 
   AddCourseDataResolver:
@@ -221,6 +221,17 @@ Resources:
       DataSourceName: !GetAtt EBCardDataSource.Name
       RequestMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/getSpecificCourseCards-request.txt"]]
       ResponseMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/getSpecificCourseCards-response.txt"]]
+  
+  GetAllCardsDataResolver:
+    Type: "AWS::AppSync::Resolver"
+    DependsOn: EBAppSyncSchema
+    Properties:
+      ApiId: !GetAtt EBAppSyncAPI.ApiId
+      TypeName: Query
+      FieldName: getAllCards
+      DataSourceName: !GetAtt EBCardDataSource.Name
+      RequestMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/getAllCards-request.txt"]]
+      ResponseMappingTemplateS3Location: !Join ["", ["s3://", !Ref ArtifactS3Bucket, "/graphql/resolvers/getAllCards-response.txt"]]
         
 Outputs:
   EBCoursesTableArn:

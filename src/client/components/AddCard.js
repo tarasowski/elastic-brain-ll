@@ -18,7 +18,7 @@ const area = name => id =>
 const optionCourses = courses =>
     courses.map(c =>
         Either.fromNullable(c)
-            .fold(err => option({}, ''), c => option({ value: c.name, id: `${c.id}` }, c.name)))
+            .fold(err => option({}, ''), c => option({ value: c.courseName, id: `${c.courseId}` }, c.courseName)))
 
 const dropdown = onCourseSelect => courses => {
     return div({}, [

@@ -8,24 +8,18 @@ type CourseList {
 }
 
 type Mutation {
-	addNewCourse(name: String!, id: String!): MyCourseList
-	addNewCard(input: CardInfo): String
-}
-
-
-input CourseInfo {
-	courseId: String!
-	courseName: String!
+	addNewCourse(courseName: String!, courseId: String!): MyCourseList
+	addNewCard(input: CardInfo): CardView
 }
 
 
 
 input CardInfo {
-	questionId: String!
+	cardId: String!
 	question: String!
 	answer: String!
-	date: String!
-	course: CourseInfo!
+	dateAdded: String!
+	courseId: String!
 }
 
 
@@ -37,16 +31,31 @@ type MyCourseList {
 type Query {
 	getAllCourses: AllCourses
 	getSpecificCourseCards(courseId: String!): SpecificCourseCards
+	getAllCards: AllCards
 }
 
-type SpecificCourseCards {
-	items: [String]
+type AllCards {
+	items: [CardView]
 	nextToken: String
 }
 
+type SpecificCourseCards {
+	items: [CardView]
+	nextToken: String
+}
+
+type CardView {
+	userId: String!
+	userId_courseId_cardId: String!
+	question: String!
+	answer: String!
+	courseId: String!
+	dateAdded: String!
+}
+
 type SingleCourse {
-	name: String!
-	id: String!
+	courseName: String!
+	courseId: String!
 }
 
 schema {
