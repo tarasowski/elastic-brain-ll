@@ -1,17 +1,27 @@
-#set ( $userId = $context.identity.sub )
-#set( $id = $context.arguments.questionId)
-#set( $question = $context.arguments.question )
-#set( $answer = $context.argument.answer)
-#set ($courseName = $context.argument.courseName)
-#set( $courseId = $context.argument.courseId)
+#set($userId = $context.identity.sub )
+#set($cardId = $context.arguments.input.cardId)
+#set($question = $context.arguments.input.question )
+#set($answer = $context.arguments.input.answer)
+#set($courseId = $context.arguments.input.courseId)
+#set($dateAdded = $context.arguments.input.dateAdded)
+#set($range = "${userId}_${courseId}_${cardId}")
+#set($timestamp = $util.time.nowISO8601())
+
 
 {
   "version": "2017-02-28",
   "operation": "PutItem",
   "key": {
-    "userId": { "S": "$userId" }
-    "userId_category_cuid": ${"S": "$userId_$courseName_$questonId"}
+    "userId": { "S": "$userId" },
+    "userId_courseId_questionId": {"S": "$range"},
   },
-  "attributeValues": $util.dynamodb.toMapValuesJson($ctx.args)
+  "attributeValues": {
+    "cardId": {"S": "$cardId"},
+    "question": {"S": "$question"},
+    "answer": {"S": "$answer"},
+    "dateAdded": {"S": "$dateAdded"},
+    "courseId": {"S": "$courseId"},
+    }
+  }
  }
 }

@@ -24,9 +24,14 @@ const updateApi = params =>
         appsync.startSchemaCreation(params, (err, data) =>
             err ? reject(err) : resolve(data)))
 
+const schemaStatus = apiId =>
+    Task((reject, resolve) =>
+        appsync.getSchemaCreationStatus({ apiId }, (err, data) =>
+            err ? reject(err) : resolve(data)))
+
+const getSchemaInfo = schemaStatus(apiId)
 
 const schemaUpdate = readSchema(schemaPath)
     .map(constructParams(apiId))
     .chain(updateApi)
-
-module.exports = { schemaUpdate }
+module.exports = { schemaUpdate, getSchemaInfo }

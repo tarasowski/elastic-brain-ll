@@ -1,8 +1,10 @@
+import { compose, trace } from 'compose.helpers'
 import { addSelectAttribute } from './dom'
 import { login, register, confirmRegister } from './auth'
 import {
     addCourse,
-    loadCourses
+    addCard,
+    initLoadContentFromServer,
 } from './graphql'
 import { saveTokenToCookie } from './cookie'
 import {
@@ -14,20 +16,33 @@ import {
     LOGIN_ACCOUNT,
     ADD_COURSE,
     registrationSuccess,
-    registrationFailure,
     confirmationSuccess,
     loginSuccess,
     updateCourses,
+    updateCards,
     SAVE_ACCESS_TOKEN,
     INIT
 } from '../actions/index'
 
+const initCards = dispatch => payload =>
+    dispatch(updateCards(payload.cards.data.data.getAllCards.items))
+
+const initCourses = dispatch => payload =>
+    (dispatch(updateCourses(payload.courses.data.data.getAllCourses.items[0].courses)), payload)
+
+const initialize = dispatch => payload =>
+    compose(
+        initCards(dispatch),
+        initCourses(dispatch)
+    )(payload)
 
 export const perform = dispatch => state => ({ command }) => {
     switch (command.type) {
         case CLEAR_ADD_CARD_TEXTAREA:
             document.getElementById('card-question').value = ''
             document.getElementById('card-answer').value = ''
+            addCard(state.profile.accessToken)(command)
+                .fork(console.error, x => x)
             break
         case ADD_SELECT_ATTRIBUTE:
             addSelectAttribute()
@@ -54,13 +69,13 @@ export const perform = dispatch => state => ({ command }) => {
                 .fork(console.error, res => dispatch(updateCourses(res.data.data.addNewCourse.courses)))
         case SAVE_ACCESS_TOKEN:
             saveTokenToCookie(state.profile.accessToken)
-            loadCourses(state.profile.accessToken)
-                .fork(console.error, res => dispatch(updateCourses(res.data.data.getAllCourses.items[0].courses)))
+            initLoadContentFromServer(state.profile.accessToken)
+                .fork(console.error, res => initialize(dispatch)(res))
             break
         case INIT:
             command.accessToken !== null
-                ? loadCourses(state.profile.accessToken)
-                    .fork(console.error, res => dispatch(updateCourses(res.data.data.getAllCourses.items[0].courses)))
+                ? initLoadContentFromServer(state.profile.accessToken)
+                    .fork(console.error, res => initialize(dispatch)(res))
                 : null
             break
         default:

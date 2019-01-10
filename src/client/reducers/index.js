@@ -15,7 +15,8 @@ import {
     LOGIN_SUCCESS,
     REGISTER_ACCOUNT,
     UPDATE_COURSES,
-    INIT
+    INIT,
+    UPDATE_CARDS
 } from '../actions/index'
 
 
@@ -39,10 +40,11 @@ const card = (state = {}) => action => {
     switch (action.type) {
         case ADD_CARD:
             return {
-                id: action.id,
+                cardId: action.cardId,
                 question: action.question,
                 answer: action.answer,
-                course: { id: action.course.id, course: action.course }
+                dateAdded: action.dateAdded,
+                courseId: action.courseId,
             }
         default:
             return state
@@ -50,26 +52,14 @@ const card = (state = {}) => action => {
 }
 
 
-export const cards = (state = [{
-    id: 0,
-    question: "my #1 question",
-    answer: "my #1 answer",
-    course: {
-        course: "cjqnfrvnh00003g5je59bhv9m"
-    }
-}, {
-    id: 1,
-    question: "my #2 question",
-    answer: "my #2 answer",
-    course: {
-        course: "cjqnfrvnh00003g5je59bhv9m"
-    }
-}]) => action => {
+export const cards = (state = []) => action => {
     switch (action.type) {
         case ADD_CARD:
             return [...state, card(state)(action)]
         case REMOVE_CARD:
             return state.filter(c => c.id !== action.id)
+        case UPDATE_CARDS:
+            return [...state, ...action.payload]
         default:
             return state
     }
@@ -79,8 +69,8 @@ const course = (state = {}) => action => {
     switch (action.type) {
         case ADD_COURSE:
             return {
-                id: action.id,
-                name: action.courseName
+                courseId: action.courseId,
+                courseName: action.courseName
             }
         default:
             return state

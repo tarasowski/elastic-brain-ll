@@ -1,0 +1,16 @@
+#set($userId = $context.identity.sub)
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "query" : {
+        "expression": "#hash = :id and begins_with(#range, :range)",
+        "expressionNames": {
+            "#hash": "userId",
+            "#range": "userId_courseId_questionId",
+        },
+        "expressionValues" : {
+            ":id" : $util.dynamodb.toDynamoDBJson($userId),
+            ":range": $util.dynamodb.toDynamoDBJson($userId),
+        }
+    }
+}

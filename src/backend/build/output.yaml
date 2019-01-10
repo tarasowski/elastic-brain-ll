@@ -5,7 +5,7 @@ Globals:
     Environment:
       Variables:
         TABLE_NAME_CARDS:
-          Ref: EBCards
+          Ref: EBCardsV1
         TABLE_NAME_COURSES:
           Ref: EBCourses
     MemorySize: 128
@@ -121,7 +121,7 @@ Resources:
           - Fn::Join:
             - ''
             - - Fn::GetAtt:
-                - EBCards
+                - EBCardsV1
                 - Arn
               - '*'
         Version: 2012-10-17
@@ -181,30 +181,30 @@ Resources:
         AwsRegion:
           Fn::Sub: ${AWS::Region}
         TableName:
-          Ref: EBCards
-      Name: EBCards
+          Ref: EBCardsV1
+      Name: EBCardsV1
       ServiceRoleArn:
         Fn::GetAtt:
         - DynamoDBRole
         - Arn
       Type: AMAZON_DYNAMODB
     Type: AWS::AppSync::DataSource
-  EBCards:
+  EBCardsV1:
     Description: Storage for the EB cards
     Properties:
       AttributeDefinitions:
       - AttributeName: userId
         AttributeType: S
-      - AttributeName: userId_category_cuid
+      - AttributeName: userId_courseId_questionId
         AttributeType: S
       BillingMode: PAY_PER_REQUEST
       KeySchema:
       - AttributeName: userId
         KeyType: HASH
-      - AttributeName: userId_category_cuid
+      - AttributeName: userId_courseId_questionId
         KeyType: RANGE
       TableName:
-        Fn::Sub: EBCards-${APIStage}
+        Fn::Sub: EBCardsV1-${APIStage}
     Type: AWS::DynamoDB::Table
   EBCourseDataSource:
     Properties:
@@ -258,6 +258,32 @@ Resources:
       UsernameAttributes:
       - email
     Type: AWS::Cognito::UserPool
+  GetAllCardsDataResolver:
+    DependsOn: EBAppSyncSchema
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - EBAppSyncAPI
+        - ApiId
+      DataSourceName:
+        Fn::GetAtt:
+        - EBCardDataSource
+        - Name
+      FieldName: getAllCards
+      RequestMappingTemplateS3Location:
+        Fn::Join:
+        - ''
+        - - s3://
+          - Ref: ArtifactS3Bucket
+          - /graphql/resolvers/getAllCards-request.txt
+      ResponseMappingTemplateS3Location:
+        Fn::Join:
+        - ''
+        - - s3://
+          - Ref: ArtifactS3Bucket
+          - /graphql/resolvers/getAllCards-response.txt
+      TypeName: Query
+    Type: AWS::AppSync::Resolver
   GetAllCoursesDataResolver:
     DependsOn: EBAppSyncSchema
     Properties:
@@ -282,6 +308,32 @@ Resources:
         - - s3://
           - Ref: ArtifactS3Bucket
           - /graphql/resolvers/getAllCourses-response.txt
+      TypeName: Query
+    Type: AWS::AppSync::Resolver
+  GetSpecificCourseCardsDataResolver:
+    DependsOn: EBAppSyncSchema
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - EBAppSyncAPI
+        - ApiId
+      DataSourceName:
+        Fn::GetAtt:
+        - EBCardDataSource
+        - Name
+      FieldName: getSpecificCourseCards
+      RequestMappingTemplateS3Location:
+        Fn::Join:
+        - ''
+        - - s3://
+          - Ref: ArtifactS3Bucket
+          - /graphql/resolvers/getSpecificCourseCards-request.txt
+      ResponseMappingTemplateS3Location:
+        Fn::Join:
+        - ''
+        - - s3://
+          - Ref: ArtifactS3Bucket
+          - /graphql/resolvers/getSpecificCourseCards-response.txt
       TypeName: Query
     Type: AWS::AppSync::Resolver
   SuperAdminUser:

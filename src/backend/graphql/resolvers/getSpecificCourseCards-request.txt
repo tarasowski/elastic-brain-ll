@@ -1,0 +1,19 @@
+#set($userId = $context.identity.sub)
+#set($courseId = $context.arguments.courseId)
+#set($range = "${userId}_${courseId}")
+
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "query" : {
+        "expression": "#hash = :uId and begins_with(#range, :range)",
+        "expressionNames": {
+            "#hash": "userId",
+            "#range": "userId_courseId_questionId"
+        },
+        "expressionValues" : {
+            ":uId" : $util.dynamodb.toDynamoDBJson($context.identity.sub),
+            ":range": $util.dynamodb.toDynamoDBJson($range),
+        }
+    }
+}

@@ -1,4 +1,3 @@
-# Changed my schema
 type AllCourses {
 	items: [CourseList]
 	nextToken: String
@@ -9,9 +8,20 @@ type CourseList {
 }
 
 type Mutation {
-	addNewCourse(name: String!, id: String!): MyCourseList
-	addNewCard(name: String!): String
+	addNewCourse(courseName: String!, courseId: String!): MyCourseList
+	addNewCard(input: CardInfo): CardView
 }
+
+
+
+input CardInfo {
+	cardId: String!
+	question: String!
+	answer: String!
+	dateAdded: String!
+	courseId: String!
+}
+
 
 type MyCourseList {
 	userId: String!
@@ -20,11 +30,32 @@ type MyCourseList {
 
 type Query {
 	getAllCourses: AllCourses
+	getSpecificCourseCards(courseId: String!): SpecificCourseCards
+	getAllCards: AllCards
+}
+
+type AllCards {
+	items: [CardView]
+	nextToken: String
+}
+
+type SpecificCourseCards {
+	items: [CardView]
+	nextToken: String
+}
+
+type CardView {
+	userId: String!
+	userId_courseId_cardId: String!
+	question: String!
+	answer: String!
+	courseId: String!
+	dateAdded: String!
 }
 
 type SingleCourse {
-	name: String!
-	id: String!
+	courseName: String!
+	courseId: String!
 }
 
 schema {
