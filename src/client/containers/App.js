@@ -15,7 +15,7 @@ const app = dispatch => state =>
     div([
         navigation(state)(dispatch),
         Route
-            .start({ path: '/', container: addCard })
+            .start({ path: '/', container: learn })
             .add({ path: '/add-course', container: addCourse })
             .add({ path: '/add-card', container: addCard })
             .add({ path: '/learn', container: learn })
