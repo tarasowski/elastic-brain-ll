@@ -32,6 +32,7 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 export const UPDATE_COURSES = 'UPDATE_COURSES'
 export const SAVE_ACCESS_TOKEN = 'SAVE_ACCESS_TOKEN'
 export const UPDATE_CARDS = 'UPDATE_CARDS'
+export const GO_TO_QUESTION = 'GO_TO_QUESTION'
 
 export const init = (token = getCookieAccessToken()) => ({
     type: INIT,
@@ -40,6 +41,11 @@ export const init = (token = getCookieAccessToken()) => ({
         type: INIT,
         accessToken: token
     }
+})
+
+export const goToQuestion = () => ({
+    type: GO_TO_QUESTION,
+    questionPosition: getInputValueFromId('go-to-question')
 })
 
 export const updateCards = data => ({
@@ -113,8 +119,6 @@ export const addCourse = (courseId = cuid()) => ({
     }
 
 })
-
-
 
 export const addCard = (
     cardId = cuid(),

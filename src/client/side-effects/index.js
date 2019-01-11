@@ -67,6 +67,7 @@ export const perform = dispatch => state => ({ command }) => {
         case ADD_COURSE:
             addCourse(state.profile.accessToken)(command)
                 .fork(console.error, res => dispatch(updateCourses(res.data.data.addNewCourse.courses)))
+            break
         case SAVE_ACCESS_TOKEN:
             saveTokenToCookie(state.profile.accessToken)
             initLoadContentFromServer(state.profile.accessToken)

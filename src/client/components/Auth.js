@@ -1,7 +1,7 @@
 import hh from 'hyperscript-helpers'
 import { h } from 'virtual-dom'
 
-const { h1, div, input, label, form, button, br, hr } = hh(h)
+const { h1, div, input, label, form, button, br, hr, pre, code, p } = hh(h)
 
 
 const inputSet = name => type => id =>
@@ -60,6 +60,7 @@ const loginForm = onLoginClick =>
         ])
     ])
 
+
 export const Auth = ({ state: { isOnline },
     dispatch: {
         onRegisterClick,
@@ -67,7 +68,8 @@ export const Auth = ({ state: { isOnline },
         onLoginClick } }) =>
     isOnline
         ? div({}, [
-            h1({}, 'Welcome to Elastic Brain')
+            h1({}, '<br>Welcome to Elastic Brain<br>'),
+            pre({}, '<br>Hello<br>World'),
         ])
         : div({}, [
             loginForm(onLoginClick),
