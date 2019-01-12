@@ -9,7 +9,7 @@
         "expression": "#hash = :uId and begins_with(#range, :range)",
         "expressionNames": {
             "#hash": "userId",
-            "#range": "userId_courseId_questionId"
+            "#range": "userId_courseId_cardId"
         },
         "expressionValues" : {
             ":uId" : $util.dynamodb.toDynamoDBJson($context.identity.sub),

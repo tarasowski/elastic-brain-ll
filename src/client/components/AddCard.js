@@ -11,7 +11,8 @@ const area = name => id =>
         textarea({
             type: 'text',
             name: id,
-            id
+            id,
+            style: 'width: 300px; height: 200px'
         })
     ])
 

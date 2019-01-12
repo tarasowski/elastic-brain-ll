@@ -12,8 +12,6 @@ type Mutation {
 	addNewCard(input: CardInfo): CardView
 }
 
-
-
 input CardInfo {
 	cardId: String!
 	question: String!
@@ -21,7 +19,6 @@ input CardInfo {
 	dateAdded: String!
 	courseId: String!
 }
-
 
 type MyCourseList {
 	userId: String!
@@ -46,6 +43,7 @@ type SpecificCourseCards {
 
 type CardView {
 	userId: String!
+	cardId: String!
 	userId_courseId_cardId: String!
 	question: String!
 	answer: String!

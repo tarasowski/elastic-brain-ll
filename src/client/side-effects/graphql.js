@@ -66,6 +66,7 @@ export const addCard = accessToken => payload =>
                       courseId: ${JSON.stringify(payload.courseId)}
                     }) {
                       userId
+                      cardId
                       question
                       answer
                     }
@@ -90,6 +91,7 @@ export const getAllCards = accessToken =>
                         answer
                         dateAdded
                         courseId
+                        cardId
                       }
                     }
                   }

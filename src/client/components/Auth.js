@@ -20,7 +20,6 @@ const registrationForm = onSignUpClick =>
             h1({}, 'Registration'),
             inputSet('Username')('text')('register-username'),
             inputSet('Password')('password')('register-password'),
-            inputSet('Email')('email')('register-email'),
             button({
                 type: 'button',
                 onclick: onSignUpClick,
@@ -68,8 +67,7 @@ export const Auth = ({ state: { isOnline },
         onLoginClick } }) =>
     isOnline
         ? div({}, [
-            h1({}, '<br>Welcome to Elastic Brain<br>'),
-            pre({}, '<br>Hello<br>World'),
+            h1({}, 'Welcome to Elastic Brain'),
         ])
         : div({}, [
             loginForm(onLoginClick),

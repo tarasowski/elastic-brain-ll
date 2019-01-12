@@ -23,12 +23,16 @@ import {
     SAVE_ACCESS_TOKEN,
     INIT
 } from '../actions/index'
+import { Either } from 'lambda.either'
 
 const initCards = dispatch => payload =>
     dispatch(updateCards(payload.cards.data.data.getAllCards.items))
 
 const initCourses = dispatch => payload =>
-    (dispatch(updateCourses(payload.courses.data.data.getAllCourses.items[0].courses)), payload)
+    Either.fromNullable(payload.courses.data.data.getAllCourses.items[0])
+        .chain(data => Either.fromNullable(data.courses))
+        .map(data => dispatch(updateCourses(data)))
+        .fold(() => payload, () => payload)
 
 const initialize = dispatch => payload =>
     compose(
@@ -51,7 +55,7 @@ export const perform = dispatch => state => ({ command }) => {
             history.pushState({ url: command.url }, null, command.url)
             break
         case REGISTER_ACCOUNT:
-            register(command.username)(command.password)(command.email)
+            register(command.username)(command.password)
                 .then(data => dispatch(registrationSuccess(data)),
                     console.error)
             break
