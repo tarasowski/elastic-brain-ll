@@ -1,6 +1,6 @@
 import hh from 'hyperscript-helpers'
 import { h } from 'virtual-dom'
-import { compose, filter, prop } from 'compose.helpers'
+import { compose, filter, prop, fold, trace, map, chain } from 'compose.helpers'
 import { parseMarkDown } from '../utils/parseMarkdown'
 
 const { div, br, hr, h2, button, h3, p, ul, li, pre, code, input } = hh(h)
@@ -127,7 +127,15 @@ const cardView = visibilityFilter => dispatch => cards =>
         ? div({}, [
             p({}, 'Please choose your course you want to learn!')
         ])
-        : showCard(visibilityFilter)(dispatch)(cards)
+        : cards[0].courseId === visibilityFilter.showCourse
+            ? showCard(visibilityFilter)(dispatch)(cards)
+            : div({}, [
+                button({
+                    type: 'button',
+                    onclick: dispatch.onStartOverClick,
+                }, 'Go Back'),
+                p({}, 'Please add some cards to this course in order to start to learn!')
+            ])
 
 const displayCourses = ({ visibilityFilter, courses }) => dispatch =>
     (Object.keys(visibilityFilter).length === 0 && visibilityFilter.constructor === Object)

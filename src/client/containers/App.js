@@ -15,12 +15,14 @@ const app = dispatch => state =>
     div([
         navigation(state)(dispatch),
         Route
-            .start({ path: '/', container: learn })
+            .start({ path: '/', container: auth })
             .add({ path: '/add-course', container: addCourse })
             .add({ path: '/add-card', container: addCard })
             .add({ path: '/learn', container: learn })
-            .add({ path: '/register', container: auth })
             .fold(routes => view(routes)(state)(dispatch)),
+        // the div below pushes down the model in case I need to debug.
+        // has to be removed on production.
+        div({ style: 'margin-bottom: 1500px' }),
         pre({}, JSON.stringify(state, null, 4)),
     ])
 

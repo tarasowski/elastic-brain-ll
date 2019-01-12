@@ -34,7 +34,7 @@ Globals:
     Environment:
       Variables:
         TABLE_NAME_COURSES: !Ref EBCourses
-        TABLE_NAME_CARDS: !Ref EBCardsV1
+        TABLE_NAME_CARDS: !Ref EBCards
 
 Resources:
   EBCourses:
@@ -50,20 +50,20 @@ Resources:
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
 
-  EBCardsV1:
+  EBCards:
     Type: "AWS::DynamoDB::Table"
     Description: Storage for the EB cards
     Properties:
-      TableName: !Sub EBCardsV1-${APIStage}
+      TableName: !Sub EBCards-${APIStage}
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
-        - AttributeName: userId_courseId_questionId
+        - AttributeName: userId_courseId_cardId
           AttributeType: S
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
-        - AttributeName: userId_courseId_questionId
+        - AttributeName: userId_courseId_cardId
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
 
@@ -72,6 +72,8 @@ Resources:
     Properties:
         UserPoolName: !Sub ${APIName}-${APIStage}
         UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
           - email
         UserPoolTags:
           Name: Name
@@ -135,7 +137,7 @@ Resources:
               - dynamodb:BatchWriteItem
             Resource: 
               - !Join ["", [!GetAtt EBCourses.Arn, "*"]]
-              - !Join ["", [!GetAtt EBCardsV1.Arn, "*"]]
+              - !Join ["", [!GetAtt EBCards.Arn, "*"]]
 
   EBAppSyncAPI:
     Type: "AWS::AppSync::GraphQLApi"
@@ -170,12 +172,12 @@ Resources:
     Type: "AWS::AppSync::DataSource"
     Properties:
       ApiId: !GetAtt EBAppSyncAPI.ApiId
-      Name: EBCardsV1
+      Name: EBCards
       Description: Dynamodb Table for cards
       Type: AMAZON_DYNAMODB
       ServiceRoleArn: !GetAtt DynamoDBRole.Arn
       DynamoDBConfig:
-        TableName: !Ref EBCardsV1
+        TableName: !Ref EBCards
         AwsRegion: !Sub ${AWS::Region}
 
   AddCourseDataResolver:

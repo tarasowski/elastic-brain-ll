@@ -5,6 +5,7 @@ import {
     getSelectedValue,
 } from './dom'
 
+
 export const INIT = 'INIT'
 export const ADD_TODO = 'ADD_TODO'
 export const TOGGLE_TODO = 'TOGGLE_TODO'
@@ -104,7 +105,6 @@ export const registerAccount = () => ({
         type: REGISTER_ACCOUNT,
         username: getInputValueFromId('register-username'),
         password: getInputValueFromId('register-password'),
-        email: getInputValueFromId('register-email')
     }
 })
 

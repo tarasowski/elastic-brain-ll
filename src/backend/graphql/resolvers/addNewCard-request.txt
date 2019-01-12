@@ -13,12 +13,12 @@
   "operation": "PutItem",
   "key": {
     "userId": { "S": "$userId" },
-    "userId_courseId_questionId": {"S": "$range"},
+    "userId_courseId_cardId": {"S": "$range"},
   },
   "attributeValues": {
     "cardId": {"S": "$cardId"},
-    "question": {"S": "$question"},
-    "answer": {"S": "$answer"},
+    "question": $util.dynamodb.toDynamoDBJson($question),
+    "answer": $util.dynamodb.toDynamoDBJson($answer),
     "dateAdded": {"S": "$dateAdded"},
     "courseId": {"S": "$courseId"},
     }

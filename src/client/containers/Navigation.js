@@ -8,7 +8,6 @@ const mapDispatchToProps = dispatch => ({
     onAddCourseClick: () => dispatch(changeUrl('/add-course')),
     onAddCardClick: () => dispatch(changeUrl('/add-card')),
     onLearnClick: () => dispatch(changeUrl('/learn')),
-    onRegisterClick: () => dispatch(changeUrl('/register')),
 })
 
 export default connect(
