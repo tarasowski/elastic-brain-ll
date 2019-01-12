@@ -127,7 +127,7 @@ const cardView = visibilityFilter => dispatch => cards =>
         ? div({}, [
             p({}, 'Please choose your course you want to learn!')
         ])
-        : cards[0].courseId === visibilityFilter.showCourse
+        : cards.filter(el => el.courseId === visibilityFilter.showCourse).length >= 1
             ? showCard(visibilityFilter)(dispatch)(cards)
             : div({}, [
                 button({
