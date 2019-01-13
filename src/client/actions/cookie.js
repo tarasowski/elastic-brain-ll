@@ -2,6 +2,9 @@ import { compose, chain, fold } from 'compose.helpers'
 import { Either } from 'lambda.either'
 
 
+export const getAccessTokenFromLocalStorage = () =>
+    localStorage.getItem(Object.keys(localStorage)[0])
+
 const readCookie = () =>
     document.cookie
 

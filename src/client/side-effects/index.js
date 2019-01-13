@@ -1,6 +1,6 @@
 import { compose, trace } from 'compose.helpers'
 import { addSelectAttribute } from './dom'
-import { login, register, confirmRegister } from './auth'
+import { login, register, confirmRegister, retrieveAccessToken } from './auth'
 import {
     addCourse,
     addCard,
@@ -20,8 +20,9 @@ import {
     loginSuccess,
     updateCourses,
     updateCards,
-    SAVE_ACCESS_TOKEN,
-    INIT
+    LOAD_CONTENT_AFTER_LOGIN,
+    INIT,
+    updateAccessToken,
 } from '../actions/index'
 import { Either } from 'lambda.either'
 
@@ -53,6 +54,7 @@ export const perform = dispatch => state => ({ command }) => {
             break
         case CHANGE_URL:
             history.pushState({ url: command.url }, null, command.url)
+            retrieveAccessToken().fork(console.error, res => dispatch(updateAccessToken(res.accessToken.jwtToken)))
             break
         case REGISTER_ACCOUNT:
             register(command.username)(command.password)
@@ -72,8 +74,7 @@ export const perform = dispatch => state => ({ command }) => {
             addCourse(state.profile.accessToken)(command)
                 .fork(console.error, res => dispatch(updateCourses(res.data.data.addNewCourse.courses)))
             break
-        case SAVE_ACCESS_TOKEN:
-            saveTokenToCookie(state.profile.accessToken)
+        case LOAD_CONTENT_AFTER_LOGIN:
             initLoadContentFromServer(state.profile.accessToken)
                 .fork(console.error, res => initialize(dispatch)(res))
             break
