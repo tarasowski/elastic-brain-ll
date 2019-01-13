@@ -1,5 +1,5 @@
 import cuid from 'cuid'
-import { getCookieAccessToken } from './cookie'
+import { getCookieAccessToken, getAccessTokenFromLocalStorage } from './cookie'
 import {
     getInputValueFromId,
     getSelectedValue,
@@ -31,11 +31,13 @@ export const LOGIN_ACCOUNT = 'LOGIN_ACCOUNT'
 export const CONFIRMATION_SUCCESS = 'CONFIRMATION_SUCCESS'
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 export const UPDATE_COURSES = 'UPDATE_COURSES'
-export const SAVE_ACCESS_TOKEN = 'SAVE_ACCESS_TOKEN'
+export const LOAD_CONTENT_AFTER_LOGIN = 'LOAD_CONTENT_AFTER_LOGIN'
 export const UPDATE_CARDS = 'UPDATE_CARDS'
 export const GO_TO_QUESTION = 'GO_TO_QUESTION'
+export const UPDATE_ACCESS_TOKEN = 'UPDATE_ACCESS_TOKEN'
 
-export const init = (token = getCookieAccessToken()) => ({
+
+export const init = (token = getAccessTokenFromLocalStorage()) => ({
     type: INIT,
     payload: token,
     command: {
@@ -77,8 +79,13 @@ export const loginSuccess = data => ({
     type: LOGIN_SUCCESS,
     payload: data,
     command: {
-        type: SAVE_ACCESS_TOKEN
+        type: LOAD_CONTENT_AFTER_LOGIN
     }
+})
+
+export const updateAccessToken = token => ({
+    type: UPDATE_ACCESS_TOKEN,
+    payload: token
 })
 
 export const loginAccount = () => ({

@@ -17,7 +17,8 @@ import {
     UPDATE_COURSES,
     INIT,
     UPDATE_CARDS,
-    GO_TO_QUESTION
+    GO_TO_QUESTION,
+    UPDATE_ACCESS_TOKEN
 } from '../actions/index'
 import { sortBy } from './helpers'
 
@@ -134,6 +135,12 @@ export const profile = (state = { isOnline: false }) => action => {
             return {
                 ...state,
                 isOnline: action.payload !== null ? true : false,
+                accessToken: action.payload
+            }
+        case UPDATE_ACCESS_TOKEN:
+            return {
+                ...state,
+                isOnline: true,
                 accessToken: action.payload
             }
         default:
